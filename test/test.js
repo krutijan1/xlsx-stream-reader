@@ -72,4 +72,19 @@ describe('The xslx stream parser', function () {
       workSheetReader.process()
     })
   })
+  it('parses a file with no workbook formatcodes and formatted date', function (done) {
+    var workBookReader = new XlsxStreamReader()
+    fs.createReadStream(path.join(__dirname, 'noformatcodes.xlsx')).pipe(workBookReader)
+    const rows = []
+    workBookReader.on('worksheet', function (workSheetReader) {
+      workSheetReader.on('end', function () {
+        assert(rows[1][4] === '1/10/46')
+        done()
+      })
+      workSheetReader.on('row', function (r) {
+        rows.push(r.values)
+      })
+      workSheetReader.process()
+    })
+  })
 })
