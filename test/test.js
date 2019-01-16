@@ -88,6 +88,21 @@ describe('The xslx stream parser', function () {
       workSheetReader.process()
     })
   })
+  it('coerces numbers when not formatting', (done) => {
+    var workBookReader = new XlsxStreamReader({ formatting: false })
+    fs.createReadStream(path.join(__dirname, 'noformatcodes.xlsx')).pipe(workBookReader)
+    const rows = []
+    workBookReader.on('worksheet', function (workSheetReader) {
+      workSheetReader.on('end', function () {
+        assert(rows[1][5] === 3479942180)
+        done()
+      })
+      workSheetReader.on('row', function (r) {
+        rows.push(r.values)
+      })
+      workSheetReader.process()
+    })
+  })
   it('optionally returns predefined cell format', (done) => {
     var workBookReader = new XlsxStreamReader({ returnFormats: true })
     const formats = []
@@ -107,6 +122,7 @@ describe('The xslx stream parser', function () {
       workSheetReader.process()
     })
   })
+
   it('optionally returns custom cell formats', function (done) {
     var workBookReader = new XlsxStreamReader({ returnFormats: true })
     fs.createReadStream(path.join(__dirname, 'import.xlsx')).pipe(workBookReader)
