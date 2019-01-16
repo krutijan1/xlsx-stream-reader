@@ -78,6 +78,7 @@ describe('The xslx stream parser', function () {
     const rows = []
     workBookReader.on('worksheet', function (workSheetReader) {
       workSheetReader.on('end', function () {
+        assert(rows[1][5] === 3479942180)
         assert(rows[1][4] === '1/10/46')
         done()
       })
